@@ -1,3 +1,21 @@
+/*
+ REGISTRO DE CARGAS
+Se utiliza un array llamado "cargas" para almacenar múltiples registros.
+Cada registro es un objeto con:
+- kmInicio
+- kmFin
+- distancia
+- litros
+
+1ro Se capturan los datos del formulario
+2do Se validan los valores ingresados
+3ro Se crea un objeto "carga"
+4to Se guarda en el array "cargas"
+5to Se renderiza la lista en pantalla
+
+Esto permite registrar múltiples cargas sin perder información previa.
+*/
+
 // 1. Seleccionamos los elementos del DOM y los guardamos en constantes
 // Usamos getElementById para vincular el HTML con nuestro código JS
 const formulario = document.getElementById('calc-form');
@@ -5,33 +23,85 @@ const inputKmInicio = document.getElementById('km-inicio');
 const inputKmFin = document.getElementById('km-fin');
 const inputLitros = document.getElementById('litros');
 const divResultado = document.getElementById('resultado');
+const lista = document.getElementById("listaCargas");
+const btnCalcular = document.getElementById("calcularTotal");
 
+//Array que guarda todas las cargas
+let cargas = [];
+
+//cuando addEventListener escucha que el usuario toca el boton ejecuta la funcion
 formulario.addEventListener('submit', function(event){
+    // Evita que la pagina se recargue 
     event.preventDefault();
+
+    //convierte de string a numero decimal
     const kmInicio = parseFloat(inputKmInicio.value);
     const kmFin = parseFloat(inputKmFin.value);
     const litros = parseFloat(inputLitros.value);
 
     const distancia = kmFin - kmInicio;
 
+    // Si distancia es menor o igual a 0 hace que modifique el div del html con ayuda del .innertHTML
     if (distancia <= 0) {
-        // Si la distancia es 0 o negativa, mostramos un error y salimos de la función
         divResultado.innerHTML = '<p style="color: red;">Error: Los Km finales deben ser mayores a los iniciales.</p>';
-        return; // El return vacío detiene la ejecución aquí
+        return;
     }
 
-    // Usamos la fórmula para obtener el consumo promedio cada 100 kilómetros
-    const consumo = (litros / distancia) * 100;
+    // Guardamos la carga en vez de calcular
+    const nuevaCarga = {
+        kmInicio: kmInicio,
+        kmFin: kmFin,
+        distancia: distancia,
+        litros: litros
+    };
 
-    // 8. Formateamos el resultado para que solo tenga 2 decimales usando .toFixed(2)
-    const resultadoFormateado = consumo.toFixed(2);
+    // Agrega cargas nuevas al Array
+    cargas.push(nuevaCarga);
+
+    // Actualiza la pantalla con todas las cargas
+    mostrarCargas();
+
+    // Limpia inputs mejorando UX
+    formulario.reset();
+});
+
+function mostrarCargas() {
+    lista.innerHTML = "";
+
+    // Recorre el Array y muestra cada carga
+    cargas.forEach((carga, index) => {
+        divResultado.innerHTML += `
+            <p>
+                Carga ${index + 1}: 
+                ${carga.kmInicio} → ${carga.kmFin} km | 
+                ${carga.litros} L
+            </p>
+        `;
+    });
+}
+
+btnCalcular.addEventListener("click", () => {
+
+    if (cargas.length === 0) {
+        alert("No hay cargas registradas");
+        return;
+    }
+
+    let totalLitros = 0;
+    let totalDistancia = 0;
+
+    cargas.forEach(carga => {
+        totalLitros += carga.litros;
+        totalDistancia += carga.distancia;
+    });
+
+    const consumoFinal = (totalLitros / totalDistancia) * 100;
 
     divResultado.innerHTML = `
         <div class="success-message">
-            <p>Distancia recorrida: <strong>${distancia} km</strong></p>
-            <p>Consumo promedio: <strong>${resultadoFormateado} L/100km</strong></p>
+            <p><strong>Total recorrido:</strong> ${totalDistancia} km</p>
+            <p><strong>Total cargado:</strong> ${totalLitros} L</p>
+            <p><strong>Consumo promedio:</strong> ${consumoFinal.toFixed(2)} L/100km</p>
         </div>
     `;
-
-    //formulario.reset(); 
 });
