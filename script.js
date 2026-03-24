@@ -6,8 +6,12 @@ const inputKmFin = document.getElementById('km-fin');
 const inputLitros = document.getElementById('litros');
 const divResultado = document.getElementById('resultado');
 
+//Array que guarda todas las cargas
+let cargas = [];
+
 formulario.addEventListener('submit', function(event){
     event.preventDefault();
+
     const kmInicio = parseFloat(inputKmInicio.value);
     const kmFin = parseFloat(inputKmFin.value);
     const litros = parseFloat(inputLitros.value);
@@ -15,23 +19,35 @@ formulario.addEventListener('submit', function(event){
     const distancia = kmFin - kmInicio;
 
     if (distancia <= 0) {
-        // Si la distancia es 0 o negativa, mostramos un error y salimos de la función
         divResultado.innerHTML = '<p style="color: red;">Error: Los Km finales deben ser mayores a los iniciales.</p>';
-        return; // El return vacío detiene la ejecución aquí
+        return;
     }
 
-    // Usamos la fórmula para obtener el consumo promedio cada 100 kilómetros
-    const consumo = (litros / distancia) * 100;
+    // 👉 Guardamos la carga en vez de calcular
+    const nuevaCarga = {
+        kmInicio: kmInicio,
+        kmFin: kmFin,
+        distancia: distancia,
+        litros: litros
+    };
 
-    // 8. Formateamos el resultado para que solo tenga 2 decimales usando .toFixed(2)
-    const resultadoFormateado = consumo.toFixed(2);
+    cargas.push(nuevaCarga);
 
-    divResultado.innerHTML = `
-        <div class="success-message">
-            <p>Distancia recorrida: <strong>${distancia} km</strong></p>
-            <p>Consumo promedio: <strong>${resultadoFormateado} L/100km</strong></p>
-        </div>
-    `;
+    mostrarCargas();
 
-    //formulario.reset(); 
+    formulario.reset();
 });
+
+function mostrarCargas() {
+    divResultado.innerHTML = "";
+
+    cargas.forEach((carga, index) => {
+        divResultado.innerHTML += `
+            <p>
+                Carga ${index + 1}: 
+                ${carga.kmInicio} → ${carga.kmFin} km | 
+                ${carga.litros} L
+            </p>
+        `;
+    });
+}
