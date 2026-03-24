@@ -23,6 +23,8 @@ const inputKmInicio = document.getElementById('km-inicio');
 const inputKmFin = document.getElementById('km-fin');
 const inputLitros = document.getElementById('litros');
 const divResultado = document.getElementById('resultado');
+const lista = document.getElementById("listaCargas");
+const btnCalcular = document.getElementById("calcularTotal");
 
 //Array que guarda todas las cargas
 let cargas = [];
@@ -64,7 +66,7 @@ formulario.addEventListener('submit', function(event){
 });
 
 function mostrarCargas() {
-    divResultado.innerHTML = "";
+    lista.innerHTML = "";
 
     // Recorre el Array y muestra cada carga
     cargas.forEach((carga, index) => {
@@ -77,3 +79,29 @@ function mostrarCargas() {
         `;
     });
 }
+
+btnCalcular.addEventListener("click", () => {
+
+    if (cargas.length === 0) {
+        alert("No hay cargas registradas");
+        return;
+    }
+
+    let totalLitros = 0;
+    let totalDistancia = 0;
+
+    cargas.forEach(carga => {
+        totalLitros += carga.litros;
+        totalDistancia += carga.distancia;
+    });
+
+    const consumoFinal = (totalLitros / totalDistancia) * 100;
+
+    divResultado.innerHTML = `
+        <div class="success-message">
+            <p><strong>Total recorrido:</strong> ${totalDistancia} km</p>
+            <p><strong>Total cargado:</strong> ${totalLitros} L</p>
+            <p><strong>Consumo promedio:</strong> ${consumoFinal.toFixed(2)} L/100km</p>
+        </div>
+    `;
+});
