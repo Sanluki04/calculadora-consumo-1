@@ -40,6 +40,8 @@ formulario.addEventListener('submit', function(event){
     const litros = parseFloat(inputLitros.value);
 
     const distancia = kmFin - kmInicio;
+    // Limpiar mensajes anteriores (errores o resultados)
+    divResultado.innerHTML = "";
 
     // Si distancia es menor o igual a 0 hace que modifique el div del html con ayuda del .innertHTML
     if (distancia <= 0) {
