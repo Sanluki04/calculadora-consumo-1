@@ -68,9 +68,15 @@ formulario.addEventListener('submit', function(event){
 function mostrarCargas() {
     lista.innerHTML = "";
 
+    // Agrega titulo 
+    lista.innerHTML += `
+        <h3 class="text-sm font-semibold text-gray-600 mt-4">Cargas registradas</h3>
+        <hr class="my-3">
+    `;
+
     // Recorre el Array y muestra cada carga
     cargas.forEach((carga, index) => {
-        divResultado.innerHTML += `
+        lista.innerHTML += `
             <p>
                 Carga ${index + 1}: 
                 ${carga.kmInicio} → ${carga.kmFin} km | 
